@@ -737,6 +737,7 @@ public class SearchBox extends RelativeLayout {
 		search.requestFocus();
 		this.results.setVisibility(View.VISIBLE);
 		animate = true;
+		searchOpen = true;
 		results.setAdapter(new SearchAdapter(context, resultList));
 		results.setOnItemClickListener(new OnItemClickListener() {
 
