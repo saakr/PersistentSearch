@@ -53,6 +53,8 @@ import io.codetail.animation.ViewAnimationUtils;
 public class SearchBox extends RelativeLayout {
 
 	public static final int VOICE_RECOGNITION_CODE = 1234;
+	public static final int SHOW_ALL_RESULTS = -1;
+	private static final int DEFAULT_MAX_VISIBLE_RESULTS = SHOW_ALL_RESULTS;
 
 	private MaterialMenuView materialMenu;
 	private TextView logo;
@@ -82,7 +84,7 @@ public class SearchBox extends RelativeLayout {
 	private Fragment mContainerFragment;
 	private android.support.v4.app.Fragment mContainerSupportFragment;
 	private SearchFilter mSearchFilter;
-
+	private int mMaxVisibleResult;
 
 
 	/**
@@ -111,6 +113,7 @@ public class SearchBox extends RelativeLayout {
 	public SearchBox(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		inflate(context, R.layout.searchbox, this);
+		this.mMaxVisibleResult = DEFAULT_MAX_VISIBLE_RESULTS;
 		this.searchOpen = false;
 		this.isMic = true;
 		this.materialMenu = (MaterialMenuView) findViewById(R.id.material_menu_button);
@@ -473,7 +476,7 @@ public class SearchBox extends RelativeLayout {
 		for (int x = 0; x < searchables.size(); x++) {
 			SearchResult searchable = searchables.get(x);
 
-			if(mSearchFilter.onFilter(searchable,getSearchText()) && count < 5) {
+			if(mSearchFilter.onFilter(searchable,getSearchText()) && (mMaxVisibleResult == -1 || count < mMaxVisibleResult)) {
 				addResult(searchable);
 				count++;
 			}
@@ -597,7 +600,7 @@ public class SearchBox extends RelativeLayout {
 	 * @param result SearchResult
 	 */
 	private void addResult(SearchResult result) {
-		if (resultList != null && resultList.size() < 6) {
+		if (resultList != null && (mMaxVisibleResult == -1 || resultList.size() < mMaxVisibleResult) ) {
 			resultList.add(result);
 			((SearchAdapter) results.getAdapter()).notifyDataSetChanged();
 		}
@@ -767,12 +770,18 @@ public class SearchBox extends RelativeLayout {
 					InputMethodManager.SHOW_FORCED, 0);
 		}
 	}
-	
+	/***
+	 * Set the maximum Visible results
+	 * @param pMaxVisibleResult Length
+	 */
+	public void setMaxVisibleResult(int pMaxVisibleResult){
+		mMaxVisibleResult = pMaxVisibleResult;
+	}
 	private void setInitialResults(){
 		resultList.clear();
 		int count = 0;
 		for (int x = 0; x < initialResults.size(); x++) {
-			if (count < 5) {
+			if (mMaxVisibleResult == -1 || count < mMaxVisibleResult) {
 				addResult(initialResults.get(x));
 				count++;
 			}

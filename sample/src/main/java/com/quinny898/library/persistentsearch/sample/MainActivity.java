@@ -49,13 +49,12 @@ public class MainActivity extends Activity {
 				//Use this to un-tint the screen
 			}
 
-			@Override
-			public void onSearchTermChanged() {
-				//React to the search term changing
-				//Called after it has updated results
-			}
+            @Override
+            public void onSearchTermChanged(String term) {
 
-			@Override
+            }
+
+            @Override
 			public void onSearch(String searchTerm) {
 				Toast.makeText(MainActivity.this, searchTerm +" Searched", Toast.LENGTH_LONG).show();
 				
@@ -75,7 +74,7 @@ public class MainActivity extends Activity {
 		if (requestCode == 1234 && resultCode == RESULT_OK) {
 			ArrayList<String> matches = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-			search.populateEditText(matches.get(0));
+			search.populateEditText(matches);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
